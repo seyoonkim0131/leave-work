@@ -1,19 +1,20 @@
 import 'react-native-gesture-handler';
 
 import * as React from 'react';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
 import HomeScreen from './component/Home';
 
-const Stack = createStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 function LogoTitle() {
   return (
     <Image
-      style={{height: 60, width: 183.56, marginLeft: 35.28}}
+      style={{height: 60, width: 183.56, marginLeft: 35.28, marginTop: 26}}
       source={require('./images/logo.png')}/>
   );
 }
@@ -21,9 +22,23 @@ function LogoTitle() {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{headerStyle:{height: 105, backgroundColor: '#c0c0c0'}, headerTitle: props => <LogoTitle {...props} />}}/>
-      </Stack.Navigator>
+      <View style={{height: 105, backgroundColor: '#ffd700', alignItems: 'center', justifyContent: 'center'}}><LogoTitle/></View>
+      <Tab.Navigator
+        initialRouteName="Home"
+        activeColor="#aaaaaa" inactiveColor='#727472'
+        labelStyle={{ fontSize: 10 }}
+        barStyle={{ backgroundColor: '#ffd700' }}
+        tabBarOptions={{style:{height: 75}}}>
+        <Tab.Screen name="Home" component={HomeScreen} options={{tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="alarm" color={'#aaaaaa'} size={25} />
+        )}}/>
+        <Tab.Screen name="Schedule" component={HomeScreen} options={{tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="calendar-today" color={'#aaaaaa'} size={25} />
+        )}}/>
+        <Tab.Screen name="User" component={HomeScreen} options={{tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="sticker-emoji" color={'#aaaaaa'} size={25} />
+        )}}/>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }

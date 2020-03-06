@@ -1,12 +1,11 @@
 {
   "expo": {
-    "name": "Blank Template",
+    "name": "Leave Work",
     "slug": "leave-work",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
-      "android",
       "web"
     ],
     "version": "1.0.0",
@@ -25,6 +24,8 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "퇴근 시간 알리미",
+    "githubUrl": "https://github.com/seyoonkim0131/leave-work"
   }
 }

@@ -5,10 +5,6 @@ class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      day: null,
-      hour: 0,
-      min: 0,
-      sec: 0,
       remain: ""
     }
   }
@@ -45,11 +41,11 @@ class HomeScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' }}>
-        <View style={{backgroundColor: '#727472', width: 282, height: 223}}>
+        <View style={{width: 282, height: 223, alignItems: 'center', justifyContent: 'center', borderColor: '#bbbbbb', borderWidth: 1, borderRadius: 30}}>
           <Text style={{color: '#ffd700'}}>{this.state.remain}</Text>
         </View>
         <View style={{marginTop: 48}}></View>
-        <View style={{backgroundColor: '#727472', width: 282, height: 223}}>
+        <View style={{width: 282, height: 223, alignItems: 'center', justifyContent: 'center', borderColor: '#bbbbbb', borderWidth: 1, borderRadius: 30}}>
           <Text style={{color: '#ffd700'}}>삼만원!</Text>
         </View>
       </View>
