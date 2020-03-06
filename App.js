@@ -22,8 +22,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{headerStyle:{height: 105}, headerTitle: props => <LogoTitle {...props} />}}/>
-        {/* <Stack.Screen name="Test" component={CountdownTimer} options={{headerStyle:{height: 105}, headerTitle: props => <LogoTitle {...props} />}}/> */}
+        <Stack.Screen name="Home" component={HomeScreen} options={{headerStyle:{height: 105, backgroundColor: '#c0c0c0'}, headerTitle: props => <LogoTitle {...props} />}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
