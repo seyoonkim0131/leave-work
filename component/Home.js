@@ -40,13 +40,13 @@ class HomeScreen extends React.Component {
   
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f4f1ee' }}>
         <View style={{width: 282, height: 223, alignItems: 'center', justifyContent: 'center', borderColor: '#bbbbbb', borderWidth: 1, borderRadius: 30}}>
-          <Text style={{color: '#ffd700'}}>{this.state.remain}</Text>
+          <Text style={{color: '#2f2f2f'}}>{this.state.remain}</Text>
         </View>
         <View style={{marginTop: 48}}></View>
         <View style={{width: 282, height: 223, alignItems: 'center', justifyContent: 'center', borderColor: '#bbbbbb', borderWidth: 1, borderRadius: 30}}>
-          <Text style={{color: '#ffd700'}}>삼만원!</Text>
+          <Text style={{color: '#2f2f2f'}}>삼만원!</Text>
         </View>
       </View>
     );

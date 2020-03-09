@@ -8,6 +8,8 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
 import HomeScreen from './component/Home';
+import ScheduleScreen from './component/Schedule';
+import UserScreen from './component/User';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -22,21 +24,21 @@ function LogoTitle() {
 function App() {
   return (
     <NavigationContainer>
-      <View style={{height: 105, backgroundColor: '#ffd700', alignItems: 'center', justifyContent: 'center'}}><LogoTitle/></View>
+      <View style={{height: 105, backgroundColor: '#fdda6c', alignItems: 'center', justifyContent: 'center'}}><LogoTitle/></View>
       <Tab.Navigator
         initialRouteName="Home"
-        activeColor="#aaaaaa" inactiveColor='#727472'
-        labelStyle={{ fontSize: 10 }}
-        barStyle={{ backgroundColor: '#ffd700' }}
-        tabBarOptions={{style:{height: 75}}}>
-        <Tab.Screen name="Home" component={HomeScreen} options={{tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="alarm" color={'#aaaaaa'} size={25} />
+        activeColor="#2f2f2f" inactiveColor='#727472'
+        labelStyle={{ fontSize: 0 }}
+        barStyle={{ backgroundColor: '#fdda6c', height: 65 }} labeled={false}
+        >
+        <Tab.Screen name="Schedule" component={ScheduleScreen} options={{tabBarIcon: () => (
+          <MaterialCommunityIcons name="calendar-today"  size={25} />
         )}}/>
-        <Tab.Screen name="Schedule" component={HomeScreen} options={{tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="calendar-today" color={'#aaaaaa'} size={25} />
+        <Tab.Screen name="Home" component={HomeScreen} options={{tabBarIcon: () => (
+          <MaterialCommunityIcons name="alarm"  size={25} />
         )}}/>
-        <Tab.Screen name="User" component={HomeScreen} options={{tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="sticker-emoji" color={'#aaaaaa'} size={25} />
+        <Tab.Screen name="User" component={UserScreen} options={{tabBarIcon: () => (
+          <MaterialCommunityIcons name="sticker-emoji"  size={25} />
         )}}/>
       </Tab.Navigator>
     </NavigationContainer>
