@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -52,5 +52,19 @@ class HomeScreen extends React.Component {
     );
   }
 }
+
+
+
+const styles = StyleSheet.create({
+  container: {
+   flex: 1,
+   paddingTop: 22
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
+})
 
 export default HomeScreen;
