@@ -1,7 +1,9 @@
 import 'react-native-gesture-handler';
 
 import * as React from 'react';
-import { Image, View, SafeAreaView } from 'react-native';
+import { Image, View, AppRegistry } from 'react-native';
+import { ApolloClient } from 'apollo-client';
+import { ApolloProvider } from '@apollo/react-hooks';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -10,8 +12,32 @@ import { MaterialCommunityIcons } from 'react-native-vector-icons';
 import HomeScreen from './component/Home';
 import ScheduleScreen from './component/Schedule';
 import UserScreen from './component/User';
+import { HttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
 const Tab = createMaterialBottomTabNavigator();
+
+const httpLink = new HttpLink({
+  uri: "https://leave-work-server.herokuapp.com/playground"
+});
+
+const authLink = setContext(async(req, {headers}) => {
+  const token = await getToken()
+  return {
+    ...headers,
+    headers: {
+      "X-JWT": token ? `${token}` : null
+    }
+  }
+}) 
+
+
+const link = authLink.concat(httpLink);
+
+const client = new ApolloClient({
+  link, cache: new InMemoryCache()
+});
 
 function LogoTitle() {
   return (
@@ -23,7 +49,7 @@ function LogoTitle() {
 
 function App() {
   return (
-    // <SafeAreaView>
+    <ApolloProvider client={client}>
       <NavigationContainer>
         <View style={{height: 105, backgroundColor: '#fdda6c', alignItems: 'center', justifyContent: 'center'}}><LogoTitle/></View>
         <Tab.Navigator
@@ -43,7 +69,7 @@ function App() {
           )}}/>
         </Tab.Navigator>
       </NavigationContainer>
-    /* </SafeAreaView> */
+    </ApolloProvider>
   );
 }
 
