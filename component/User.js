@@ -1,7 +1,33 @@
 import * as React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Picker } from 'react-native';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import Modal from "react-native-modal";
+
+const GET_USER = gql`
+    query {
+        ok
+        error
+        user {
+            startH
+            startM
+            endH
+            endM
+            salary
+            name
+        }
+    }
+`;
+
+// function GetStartH() {
+//     const { loading, error, data } = useQuery(GET_USER);
+//     if(loading) return 'Loaing...';
+//     if(error) return `Error -> ${error.message}`;
+//     if(data) {
+//         this.
+//     }
+// }
 
 class User extends React.Component {
     constructor(props) {
@@ -50,8 +76,21 @@ class User extends React.Component {
     }
     setModalVisible(visible, menuState) {
         this.setState({modalVisible: visible, menuState: menuState});
+        this._getTime;
     }
+
+    _getTime() {
+        const { loading, error, data } = useQuery(GET_USER);
+        if(loading) return 'Loading...';
+        if(error) return `Error -> ${error.message}`;
+        if(data !== null) {
+            console.log(data)
+            // this.setState({})
+        }
+    }
+
     render () {
+        
         return(
             <View style={styles.container}>
                 <FlatList
