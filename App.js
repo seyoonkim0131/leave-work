@@ -1,107 +1,99 @@
 import 'react-native-gesture-handler';
 
 import * as React from 'react';
-import { View } from 'react-native';
-import { ApolloClient } from 'apollo-client';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { AsyncStorage } from 'react-native'
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { MaterialCommunityIcons } from 'react-native-vector-icons';
+import { ApolloProvider, useQuery } from '@apollo/react-hooks';
 
-import HomeScreen from './component/Home';
-import ScheduleScreen from './component/Schedule';
-import UserScreen from './component/User';
-import SignInScreen from './component/SignIn';
-
-import LogoTitle from './component/LogoTitle';
-
+import ApolloClient from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import gql from 'graphql-tag';
 
-import { signIn, signOut, getToken } from './util';
+import { NavigationContainer } from '@react-navigation/native';
 
-const Tab = createMaterialBottomTabNavigator();
-const Stack = createStackNavigator();
+import LogOutStack from './component/LogOutStack';
+import LogInStack from './component/LogInStack';
 
-const httpLink = new HttpLink({
-  uri: "https://leave-work-server.herokuapp.com/graphql"
-});
+const cache = new InMemoryCache();
 
-const authLink = setContext(async(_, {headers}) => {
-  const token = await getToken()
-  console.log(`token: ${token}`)
-  return {
-    ...headers,
-    headers: {
-      "X-JWT": token ? `${token}` : null
+const IS_LOGGED_IN = gql`
+    query IsUserLoggedIn {
+        isLoggedIn @client
     }
-  }
-});
+`;
 
-const link = authLink.concat(httpLink);
+const authLink = setContext(async (_, { headers }) => {
+  const token = await AsyncStorage.getItem('jwt');
+  return {
+      headers: {
+          ...headers,
+          'X-JWT': token,
+      },
+  };
+});
+const httpLink = new HttpLink({uri: 'https://leave-work-server.herokuapp.com/graphql'});
+const httpAuthLink = authLink.concat(httpLink);
 
 const client = new ApolloClient({
-  link, cache: new InMemoryCache()
+  link: httpAuthLink,
+  cache,
+  resolvers: {},
+  request: (operation) => {
+    const token = AsyncStorage.getItem('jwt');
+    operation.setContext({
+      headers: {
+        'X-JWT': token ? token : ''
+      }
+    })
+  }
 });
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      jwt: false
+cache.writeData({
+  data: {
+    isLoggedIn: Boolean(AsyncStorage.getItem('jwt'))
+  },
+});
+
+function IsLoggedIn() {
+  const { data } = useQuery(IS_LOGGED_IN);
+  return data.isLoggedIn ? <LogInStack/> : <LogOutStack/>;
+}
+
+function App() {
+  
+  const [ isLoggedIn, setIsLoggedIn ] = React.useState(false);
+  const [ isReady, setIsReady ] = React.useState(false);
+
+  React.useEffect(() => {
+    const authState = async () => {
+      try {
+        const token = await AsyncStorage.getItem('jwt');
+        console.log(token)
+        const tokenState = (token !== null ? true : false);
+        setIsLoggedIn(tokenState);
+      } finally {
+        setIsReady(true);
+      }
+    };
+    if (!isReady) {
+      authState();
     }
+  }, [isReady]);
+
+  if(!isReady) {
+    return null;
   }
 
-  
-  componentDidMount() {
-    this._handleChangeJwtState();
-  }
-
-  _handleChangeJwtState = async(jwt = false, token) => {
-    this.setState({jwt});
-    if(jwt) { 
-      await signIn(token);
-    } else {
-      await signOut();
-    }  
-  }
-  
-  render() {
-    return (
-      <ApolloProvider client={client}>
-        <NavigationContainer>
-          {this.state.jwt ?
-            <View>
-            <View style={{height: 105, backgroundColor: '#fdda6c', alignItems: 'center', justifyContent: 'center'}}><LogoTitle/></View>
-              <Tab.Navigator
-                initialRouteName="Home"
-                activeColor="#2f2f2f" inactiveColor='#727472'
-                labelStyle={{ fontSize: 0 }}
-                barStyle={{ backgroundColor: '#fdda6c', height: 65 }} labeled={false}
-              >
-                <Tab.Screen name="Schedule" component={ScheduleScreen} options={{tabBarIcon: () => (
-                  <MaterialCommunityIcons name="calendar-today"  size={25} />
-                  )}}/>
-                <Tab.Screen name="Home" component={HomeScreen} options={{tabBarIcon: () => (
-                  <MaterialCommunityIcons name="alarm"  size={25} />
-                  )}}/>
-                <Tab.Screen name="User" component={UserScreen} options={{tabBarIcon: () => (
-                  <MaterialCommunityIcons name="sticker-emoji"  size={25} />
-                  )}}/>
-              </Tab.Navigator>
-            </View>
-          :
-            <Stack.Navigator headerMode={"none"}>
-              <Stack.Screen name='SignIn' component={SignInScreen}/>
-            </Stack.Navigator>
-          }
-        </NavigationContainer>
-      </ApolloProvider>
-    );
-  }
+  return (
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        {/* { isLoggedIn ? <LogInStack/> : <LogOutStack/> } */}
+        <IsLoggedIn />
+      </NavigationContainer>
+    </ApolloProvider>
+  )
 }
 
 export default App;
