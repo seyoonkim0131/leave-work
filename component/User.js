@@ -1,12 +1,32 @@
 import * as React from 'react';
-import { View, FlatList, Picker } from 'react-native';
-import { Container, MenuContainer, ModalContainer, StyledModal, ItemText, DownArrowImage, ModalHeaderText, ButtonContainer, ButtonText, StyledPicker, ModalBodyText } from './StyledComponents';
-import LogoutButton from './LogoutButton';
+import { View, FlatList, Picker, AsyncStorage, Text } from 'react-native';
+import { useApolloClient } from '@apollo/react-hooks';
+
+import { Container, MenuContainer } from './styles/Containers';
+import { ModalContainer, StyledModal, ModalHeaderText, ModalBodyText } from './styles/Modals';
+import { ButtonContainer, ButtonText } from './styles/Buttons';
+import { DownArrowImage } from './styles/Images';
+import { ItemText } from './styles/Text';
+import { StyledPicker } from './styles/Other';
 
 import { useQuery } from '@apollo/react-hooks';
 
 import { hours, mins } from '../util/vars';
 import { GET_MY_PROFILE } from '../Queries/Query';
+
+function LogoutButton() {
+    const client = useApolloClient();
+    return (
+        <ButtonContainer
+            onPress={() => {
+                client.writeData({ data: { isLoggedIn: false } });
+                AsyncStorage.removeItem('jwt');
+            }}
+            buttonMargin={'50px'} >
+            <ButtonText>확인</ButtonText>
+        </ButtonContainer>
+    )
+};
 
 function User() {
     const [ modalVisible, setModalVisible ] = React.useState(false);
@@ -15,8 +35,38 @@ function User() {
     const [ selStartM, setSelStartM ] = React.useState('00');
     const [ selEndH, setSelEndH ] = React.useState('00');
     const [ selEndM, setSelEndM ] = React.useState('00');
+
     const { loading, error, data } = useQuery(GET_MY_PROFILE);
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>error.message</Text>;
+    if (!data) //{
+        return <Text>Not Found</Text>;
+    // } else {
+    //     const user = data.GetMyProfile.user
+    //     console.log(user)
+    //     if(data.GetMyProfile.user.startH) {
+    //         setSelStartH(data.GetMyProfile.user.startH);
+    //     } else {
+    //         setSelStartH('09');
+    //     }
+    //     if(data.GetMyProfile.user.startM) {
+    //         setSelStartM(data.GetMyProfile.user.startM);
+    //     } else {
+    //         setSelStartM('00');
+    //     }
+    //     if(data.GetMyProfile.user.endH) {
+    //         setSelEndH(data.GetMyProfile.user.endH);
+    //     } else {
+    //         setSelEndH('18');
+    //     }
+    //     if(data.GetMyProfile.user.endM) {
+    //         setSelEndM(data.GetMyProfile.user.endM);
+    //     } else {
+    //         setSelEndM('00');
+    //     }
+    // }
     
+
     return(
         <Container>
             <FlatList
@@ -34,21 +84,21 @@ function User() {
                     </MenuContainer>
                 }
             />
-            {menuState == 'setStartTime' ?
+            { menuState == 'setStartTime' ?
                 <StyledModal
                     animationIn="slideInUp"
                     animationOut="slideOutDown"
                     coverScreen={false}
                     isVisible={modalVisible}
                     onBackdropPress={() => {(setModalVisible(false), setMenuState(''))}}>
-                    <ModalContainer modalHeight={'450px'}>
+                    <ModalContainer modalHeight={'380px'}>
                         <View>
                             <ModalHeaderText>출근시간 설정</ModalHeaderText>
                             <View style={{flex: 2, justifyContent: 'flex-start', flexDirection: 'column'}}>
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'10px'}
-                                        selectedValue={selStartH}
+                                        selectedValue={ (data.GetMyProfile.user.startH !== null ? data.GetMyProfile.user.startH : '09') }
                                         onValueChange={ (itemValue) => setSelStartH(itemValue) } >
                                         {hours.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -58,7 +108,7 @@ function User() {
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'80px'}
-                                        selectedValue={selStartM}
+                                        selectedValue={ (data.GetMyProfile.user.startM !== null ? data.GetMyProfile.user.startM : '00') }
                                         onValueChange={ (itemValue) => setSelStartM(itemValue) } >
                                         {mins.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -74,21 +124,21 @@ function User() {
                         </View>
                     </ModalContainer>
                 </StyledModal>
-            : menuState == 'setEndTime'?
+            : menuState == 'setEndTime' ?
                 <StyledModal
                     animationIn="slideInUp"
                     animationOut="slideOutDown"
                     coverScreen={false}
                     isVisible={modalVisible}
                     onBackdropPress={() => {(setModalVisible(false), setMenuState(''))}}>
-                    <ModalContainer modalHeight={'450px'}>
+                    <ModalContainer modalHeight={'380px'}>
                         <View>
                             <ModalHeaderText>퇴근시간 설정</ModalHeaderText>
                             <View style={{flex: 2, justifyContent: 'flex-start', flexDirection: 'column'}}>
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'10px'}
-                                        selectedValue={selEndH}
+                                        selectedValue={ (data.GetMyProfile.user.endH !== null ? data.GetMyProfile.user.endH : '18') }
                                         onValueChange={ (itemValue) => setSelEndH(itemValue) } >
                                         {hours.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -98,7 +148,7 @@ function User() {
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'80px'}
-                                        selectedValue={selEndM}
+                                        selectedValue={ (data.GetMyProfile.user.endM !== null ? data.GetMyProfile.user.endM : '00') }
                                         onValueChange={ (itemValue) => setSelEndM(itemValue) } >
                                         {mins.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
