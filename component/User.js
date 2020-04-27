@@ -5,14 +5,15 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { Container, MenuContainer } from './styles/Containers';
 import { ModalContainer, StyledModal, ModalHeaderText, ModalBodyText } from './styles/Modals';
 import { ButtonContainer, ButtonText } from './styles/Buttons';
-import { DownArrowImage } from './styles/Images';
+import { DownArrowImage, Preloader } from './styles/Images';
 import { ItemText } from './styles/Text';
 import { StyledPicker } from './styles/Other';
 
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { hours, mins } from '../util/vars';
 import { GET_MY_PROFILE } from '../Queries/Query';
+import { UPDATE_MY_PROFILE } from '../Queries/Mutation';
 
 function LogoutButton() {
     const client = useApolloClient();
@@ -31,41 +32,32 @@ function LogoutButton() {
 function User() {
     const [ modalVisible, setModalVisible ] = React.useState(false);
     const [ menuState, setMenuState ] = React.useState('');
-    const [ selStartH, setSelStartH ] = React.useState('00');
+    const [ selStartH, setSelStartH ] = React.useState('09');
     const [ selStartM, setSelStartM ] = React.useState('00');
-    const [ selEndH, setSelEndH ] = React.useState('00');
+    const [ selEndH, setSelEndH ] = React.useState('18');
     const [ selEndM, setSelEndM ] = React.useState('00');
 
+    const [ Submit ] = useMutation(UPDATE_MY_PROFILE, {
+        variables: { selStartH, selStartM, selEndH, selEndM },
+        onCompleted: (data) => {
+            if(data.UpdateMyProfile.ok) {
+                console.log('Success');
+            } else {
+                console.log('Error')
+            }
+        }
+    })
+
     const { loading, error, data } = useQuery(GET_MY_PROFILE);
-    if (loading) return <Text>Loading...</Text>;
-    if (error) return <Text>error.message</Text>;
-    if (!data) //{
+    if (loading) return <Preloader source={require('./../images/spinner.gif')}/>;
+    if (error) return <Text>{error.message}</Text>;
+    if (!data) {
         return <Text>Not Found</Text>;
-    // } else {
-    //     const user = data.GetMyProfile.user
-    //     console.log(user)
-    //     if(data.GetMyProfile.user.startH) {
-    //         setSelStartH(data.GetMyProfile.user.startH);
-    //     } else {
-    //         setSelStartH('09');
-    //     }
-    //     if(data.GetMyProfile.user.startM) {
-    //         setSelStartM(data.GetMyProfile.user.startM);
-    //     } else {
-    //         setSelStartM('00');
-    //     }
-    //     if(data.GetMyProfile.user.endH) {
-    //         setSelEndH(data.GetMyProfile.user.endH);
-    //     } else {
-    //         setSelEndH('18');
-    //     }
-    //     if(data.GetMyProfile.user.endM) {
-    //         setSelEndM(data.GetMyProfile.user.endM);
-    //     } else {
-    //         setSelEndM('00');
-    //     }
-    // }
-    
+    } else {
+        // if(!data.GetMyProfile.user.startH) {
+            setSelStartH(data.GetMyProfile.user.startH);
+        // } 
+    }
 
     return(
         <Container>
@@ -117,7 +109,7 @@ function User() {
                                 </View>
                             </View>
                             <ButtonContainer
-                                onPress={() => {(setModalVisible(!modalVisible), setMenuState(''))}}
+                                onPress={() => {(setModalVisible(!modalVisible), setMenuState(''), Submit())}}
                                 btnBottom={'30px'}>
                                 <ButtonText>적용</ButtonText>
                             </ButtonContainer>

@@ -20,7 +20,7 @@ const cache = new InMemoryCache();
 
 const IS_LOGGED_IN = gql`
     query IsUserLoggedIn {
-        isLoggedIn @client
+      isLoggedIn @client
     }
 `;
 
@@ -70,7 +70,6 @@ function App() {
     const authState = async () => {
       try {
         const token = await AsyncStorage.getItem('jwt');
-        console.log(token)
         const tokenState = (token !== null ? true : false);
         setIsLoggedIn(tokenState);
       } finally {

@@ -10,3 +10,11 @@ export const SIGN_IN = gql`
     }
 `;
 
+export const UPDATE_MY_PROFILE =gql`
+    mutation UpdateMyProfile($selStartH: String, $selStartM: String, $selEndH: String, $selEndM: String, $salary: String) {
+        UpdateMyProfile(startH: $selStartH, startM: $selStartM, endH: $selEndH, endM: $selEndM, salary: $salary) {
+            ok
+            error
+        }
+    }
+`;

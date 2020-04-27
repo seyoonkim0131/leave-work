@@ -5,3 +5,10 @@ export const DownArrowImage = styled.Image`
     width: 20px;
     margin: 15px;
 `;
+
+export const Preloader = styled.Image`
+    height: 50px;
+    width: 50px;
+    align-self: center;
+    vertical-align: center;
+`;
