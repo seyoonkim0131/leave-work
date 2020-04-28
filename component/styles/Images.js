@@ -10,5 +10,5 @@ export const Preloader = styled.Image`
     height: 50px;
     width: 50px;
     align-self: center;
-    vertical-align: center;
+    margin-top: 180px;
 `;

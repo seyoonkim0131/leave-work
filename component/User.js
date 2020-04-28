@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, FlatList, Picker, AsyncStorage, Text } from 'react-native';
+import { View, FlatList, Picker, AsyncStorage, Text, TextInput } from 'react-native';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { Container, MenuContainer } from './styles/Containers';
@@ -36,6 +36,7 @@ function User() {
     const [ selStartM, setSelStartM ] = React.useState('00');
     const [ selEndH, setSelEndH ] = React.useState('18');
     const [ selEndM, setSelEndM ] = React.useState('00');
+    const [ salary, setSalary ] = React.useState('2000');
 
     const [ Submit ] = useMutation(UPDATE_MY_PROFILE, {
         variables: { selStartH, selStartM, selEndH, selEndM },
@@ -54,9 +55,7 @@ function User() {
     if (!data) {
         return <Text>Not Found</Text>;
     } else {
-        // if(!data.GetMyProfile.user.startH) {
-            setSelStartH(data.GetMyProfile.user.startH);
-        // } 
+        console.log(data.GetMyProfile.user)
     }
 
     return(
@@ -90,7 +89,7 @@ function User() {
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'10px'}
-                                        selectedValue={ (data.GetMyProfile.user.startH !== null ? data.GetMyProfile.user.startH : '09') }
+                                        selectedValue={selStartH}
                                         onValueChange={ (itemValue) => setSelStartH(itemValue) } >
                                         {hours.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -100,7 +99,7 @@ function User() {
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'80px'}
-                                        selectedValue={ (data.GetMyProfile.user.startM !== null ? data.GetMyProfile.user.startM : '00') }
+                                        selectedValue={selStartM}
                                         onValueChange={ (itemValue) => setSelStartM(itemValue) } >
                                         {mins.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -130,7 +129,7 @@ function User() {
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'10px'}
-                                        selectedValue={ (data.GetMyProfile.user.endH !== null ? data.GetMyProfile.user.endH : '18') }
+                                        selectedValue={ selEndH }
                                         onValueChange={ (itemValue) => setSelEndH(itemValue) } >
                                         {hours.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -140,7 +139,7 @@ function User() {
                                 <View style={{flex: 2, position: 'absolute'}}>
                                     <StyledPicker
                                         left={'80px'}
-                                        selectedValue={ (data.GetMyProfile.user.endM !== null ? data.GetMyProfile.user.endM : '00') }
+                                        selectedValue={ selEndM }
                                         onValueChange={ (itemValue) => setSelEndM(itemValue) } >
                                         {mins.map((data, i) => {
                                             return (<Picker.Item label={data.label} value={data.value} key={i} />)
@@ -149,7 +148,7 @@ function User() {
                                 </View>
                             </View>
                             <ButtonContainer
-                                onPress={() => {(setModalVisible(!modalVisible), setMenuState(''))}}
+                                onPress={() => {(setModalVisible(!modalVisible), setMenuState(''), Submit())}}
                                 btnBottom={'30px'}>
                                 <ButtonText>적용</ButtonText>
                             </ButtonContainer>
@@ -163,15 +162,22 @@ function User() {
                     coverScreen={false}
                     isVisible={modalVisible}
                     onBackdropPress={() => {(setModalVisible(false), setMenuState(''))}}>
-                    <ModalContainer modalHeight={'450px'}>
-                        <View>
+                    <ModalContainer modalHeight={'320px'}>
+                        {/* <View> */}
                             <ModalHeaderText>연봉 설정</ModalHeaderText>
+                            <View style={{marginVertical: 15, borderColor: '#000000', borderBottomWidth: 1, borderRadius: 5, marginTop: 40, width: 150, paddingHorizontal: 5, flex: 1, flexDirection: 'row' }}>
+                                <TextInput style={{height: 40, width: 90, fontSize: 20, paddingHorizontal: 10}} keyboardType={'number-pad'} onChangeText={text => setSalary(text)} value={salary} returnKeyType={"done"} textAlign={'right'}></TextInput>
+                                <Text style={{paddingTop: 15}}>만원</Text>
+                            </View>
+                            <View style={{marginTop: 30}}>
+                                <Text style={{color: 'red', fontSize: 12}}>기본값은 최저시급입니다.</Text>
+                            </View>
                             <ButtonContainer
                                 onPress={() => {(setModalVisible(!modalVisible), setMenuState(''))}}
                                 btnBottom={'30px'}>
                                 <ButtonText>적용</ButtonText>
                             </ButtonContainer>
-                        </View>
+                        {/* </View> */}
                     </ModalContainer>
                 </StyledModal>
             : menuState == 'setUserInfo' ?
