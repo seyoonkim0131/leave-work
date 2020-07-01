@@ -1,4 +1,8 @@
 # Leave Work
+0. 개요
+- 직장인을 위한 퇴근 타이머. 이번달 일한 시간, 근무일 등을 확인할 수 있다.
+- React-Native, SASS, GraphQL, Apollo, PostgreSQL, Heroku
+- Backend -> https://github.com/seyoonkim0131/leave-work-server
 
 1. Main
 - [x] 퇴근까지 남은 시간 countdown
